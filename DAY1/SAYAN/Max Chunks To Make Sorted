@@ -1,0 +1,23 @@
+class Solution {
+public:
+    int maxChunksToSorted(vector<int>& vec) {
+     int count =0;
+        int maxi = -1;
+          for (int i = 0; i <vec.size(); i++)
+          {
+               
+               if(vec[i]>=maxi)
+
+               {
+                   maxi=vec[i];
+                  
+                    
+               }
+                if(maxi==i)
+                    {
+                        count++;
+                    }
+          }
+        return count ;  
+    }
+};
