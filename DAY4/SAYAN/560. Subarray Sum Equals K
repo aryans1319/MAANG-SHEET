@@ -1,0 +1,72 @@
+Solution 1 : 
+Brute Force Approach (O(N^3) solution)
+
+
+class Solution {
+public:
+    int subarraySum(vector<int>& arr, int k) {
+          int count =0;
+    int n = arr.size();
+    // Pick starting point
+    for (int i=0; i <n; i++)
+    {
+        // Pick ending point
+        for (int j=i; j<n; j++)
+        {
+            // Print subarray between current starting
+            // and ending points
+            int sum =0;
+            for (int k=i; k<=j; k++)
+            {
+                 // cout << arr[k] << " ";
+                  sum+= arr[k];
+
+            }
+             if(sum==k)
+             {
+ count++;
+             }
+             // cout << sum <<endl;
+               
+ 
+            // cout << endl;
+        }
+    }
+         return count ; 
+    }
+};
+
+
+BEST SOLUTION SO FAR ,100% BEST 
+
+(Using hashmap (unorder-map))
+o(n)
+
+class Solution {
+public:
+    int subarraySum(vector<int>& vec, int k) {
+        
+     int count=0;
+
+ unordered_map<int,int>mp;
+         mp[0]++;
+ int sum =0;
+   for (int i = 0; i < vec.size(); i++)
+   {
+        sum+=vec[i];
+         if(mp.find((sum-k))!=mp.end())
+         {
+              auto it = mp.find((sum-k));
+             count+=it->second;
+         }
+      
+              mp[sum]++;
+         
+         
+   }
+    return count;
+   
+    }
+};
+
+
