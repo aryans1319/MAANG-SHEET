@@ -1,0 +1,49 @@
+ Brute force solution :) 
+ 
+T.C - O(n)
+S.C - O(n) ( we are using a vector to store our values )
+
+class Solution {
+public:
+
+vector sortArrayByParity(vector& A) {
+vectorv;
+
+  for(auto elem : A)
+  {
+       if(elem % 2==0)
+       {
+           v.push_back(elem);
+       }
+  }
+  for(auto elem : A)
+  {
+       if(elem % 2!=0)
+       {
+           v.push_back(elem);
+       }
+  }
+ return v;
+ }};
+ 
+ 
+ 
+ Optimal opproach :) using two pointer :) 
+ 
+T.C - O(n)
+ S.C - O(1)
+ 
+ class Solution {
+public:
+vector sortArrayByParity(vector& A) {
+int j=0;
+for(int i=0;i<A.size();i++)
+{
+if(A[i]%2==0)
+{
+swap(A[i],A[j]);
+j++;
+}
+}
+return A;
+}};
