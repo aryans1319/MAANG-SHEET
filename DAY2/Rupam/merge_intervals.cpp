@@ -1,4 +1,4 @@
-Initially sort the array and then push the first element into the answer for speculation.
+/* Initially sort the array and then push the first element into the answer for speculation.
 We have two condition if the first elements second part of ans array is greater than or equal to the second element first part of the 
 interval array.
 The other condition we have to tackle is what if its not? then we push the particular element into the ans array which will be then be under speculation.
@@ -33,7 +33,7 @@ Since ans[j][1]<interval[i][0] thus not contributing to the merge.
 ans=[[1,6][8,10][15,18]]
                   j
 
-Thus yielding our final answer.
+Thus yielding our final answer. */
 
 class Solution {
 public:
