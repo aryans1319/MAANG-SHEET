@@ -1,0 +1,52 @@
+You are given an integer array prices where prices[i] is the price of a given stock on the ith day, and an integer k.
+Find the maximum profit you can achieve. You may complete at most k transactions.
+Note: You may not engage in multiple transactions simultaneously (i.e., you must sell the stock before you buy again).
+ 
+Example 1:
+Input: k = 2, prices = [2,4,1]
+Output: 2
+Explanation: Buy on day 1 (price = 2) and sell on day 2 (price = 4), profit = 4-2 = 2.
+Example 2:
+Input: k = 2, prices = [3,2,6,5,0,3]
+Output: 7
+Explanation: Buy on day 2 (price = 2) and sell on day 3 (price = 6), profit = 6-2 = 4. Then buy on day 5 (price = 0) and sell on day 6 (price = 3), profit = 3-0 = 3.
+ 
+Constraints:
+	• 0 <= k <= 100
+	• 0 <= prices.length <= 1000
+	• 0 <= prices[i] <= 1000
+
+From <https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/> 
+
+// Only k transaction --> k time buy and k time sell
+
+
+class Solution {
+public:
+    int dp[10001][2][101];
+    int bestTime(vector<int>&prices, int currentDay, bool canBuy, int transCount){
+        if(currentDay >= prices.size() || transCount <=0){
+            return 0;
+        }
+        
+        if(dp[currentDay][canBuy][transCount]!=-1){
+            return dp[currentDay][canBuy][transCount];
+        }
+        int idle = bestTime(prices,currentDay+1,canBuy,transCount);
+        int buy=0,sell=0;
+        if(canBuy){
+             buy = -prices[currentDay] + bestTime(prices,currentDay+1, 0,transCount);
+            dp[currentDay][canBuy][transCount] =  max(buy,idle);
+            return  dp[currentDay][canBuy][transCount];
+        }
+        else{
+            sell = prices[currentDay] + bestTime(prices,currentDay+1,1,transCount-1);
+            dp[currentDay][canBuy][transCount] =  max(sell,idle);
+            return  dp[currentDay][canBuy][transCount];
+        }
+    }
+    int maxProfit(int k, vector<int>& prices) {
+        memset(dp,-1,sizeof(dp));
+        return bestTime(prices,0,1,k);
+    }
+};
