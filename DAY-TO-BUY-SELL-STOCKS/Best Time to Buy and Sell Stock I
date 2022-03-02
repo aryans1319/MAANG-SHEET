@@ -1,0 +1,171 @@
+Only 1 transaction --> 1 time buy and 1 time sell
+
+You are given an array prices where prices[i] is the price of a given stock on the ith day.
+You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.
+Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.
+ 
+Example 1:
+Input: prices = [7,1,5,3,6,4]
+Output: 5
+Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.
+Note that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.
+Example 2:
+Input: prices = [7,6,4,3,1]
+Output: 0
+Explanation: In this case, no transactions are done and the max profit = 0.
+ 
+Constraints:
+	• 1 <= prices.length <= 105
+	• 0 <= prices[i] <= 104
+
+From <https://leetcode.com/problems/best-time-to-buy-and-sell-stock/> 
+
+
+DP ON STATE :-
+
+Choices:-
+
+	1. Not Buy --> currentIndex + 1
+	2. Buy -->  currentIndex + 1 and - price[currentIndex]
+	3. Sell --> currentIndex + 1 and + price[currentIndex]
+
+If we have bought the stock previously, then only sell choice will come.
+To check we can sell or not, we take a bool variable as true.
+canbuy = true --> at first
+After buying the stock, canbuy = false --> now we cannot buy, we can sell only.
+After selling the stock, canbuy = true --> we can buy again
+
+Currentindex , True , 1(transaction count)
+Return max from choices.
+
+Base case:-
+
+currentIndex >= prices.size() --> 0 + (sell/buy)
+
+
+Recursion:-
+
+class Solution {
+public:
+    int bestTime(vector<int>& prices, int currentDay ,bool canBuy, int transcount){
+      
+        // base case
+        if(currentDay>= prices.size() || transcount<= 0){
+          return 0;
+        }
+      
+        // idle --> we are not buying 
+        // just move to nextDay
+        int idle = bestTime(prices,currentDay+1,canBuy,transcount);
+      
+        
+        int buy=0,sell=0;
+        // if --> canbuy == true, then olny we can buy
+        if(canBuy){
+          // when we are buying , -price[currentday] , f(currentDay+1, false, count)
+          // when we are buying , make the canBuy to false, so we can sell now
+
+          buy = - prices[currentDay] + bestTime(prices,currentDay+1,0,transcount);
+          return max(buy,idle);
+        }
+        // else ---> canBuy == false, then olny we can sell
+        else{
+          // when we are selling , +price[currentday] , f(currentDay+1, true, count-1)
+          // when we are selling , make the canBuy to true, so we can buy again
+
+          sell = + prices[currentDay] + bestTime(prices,currentDay+1,1,transcount-1);
+          return max(sell,idle);
+        }
+    }
+    int maxProfit(vector<int>& prices) {
+        
+        // we are starting from 0 index canBuy == true at first and transaction count == 1
+        return bestTime(prices,0,1,1);
+    }
+};
+
+DP MEMOIZATION :-
+
+class Solution {
+public:
+    int bestTime(vector<int>& prices, int currentDay ,bool canBuy, int transcount,unordered_map<string,int>&mp){
+      
+        // base case
+        if(currentDay>= prices.size() || transcount<= 0){
+          return 0;
+        }
+      
+        // idle --> we are not buying 
+        // just move to nextDay
+        string currentKey = to_string(currentDay) + "_" + to_string(canBuy) + "_" + to_string(transcount);
+        if(mp.find(currentKey)!=mp.end()){
+          return mp[currentKey];
+        }
+        int idle = bestTime(prices,currentDay+1,canBuy,transcount,mp);
+      
+        
+        int buy=0,sell=0;
+        // if --> canbuy == true, then olny we can buy
+        if(canBuy){
+          // when we are buying , -price[currentday] , f(currentDay+1, false, count)
+          // when we are buying , make the canBuy to false, so we can sell now
+          buy = - prices[currentDay] + bestTime(prices,currentDay+1,0,transcount,mp);
+          // return maximum of idle and buy
+          mp[currentKey] = max(buy,idle);
+          return mp[currentKey];
+        }
+        // else ---> canBuy == false, then olny we can sell
+        else{
+          // when we are selling , +price[currentday] , f(currentDay+1, true, count-1)
+          // when we are selling , make the canBuy to true, so we can buy again
+          sell = + prices[currentDay] + bestTime(prices,currentDay+1,1,transcount-1,mp);
+          // return maximum of idle and sell
+          mp[currentKey] = max(sell,idle);
+          return mp[currentKey];
+        }
+    }
+    int maxProfit(vector<int>& prices) {
+        
+        unordered_map<string,int> mp;
+        // we are starting from 0 index canBuy == true at first and transaction count == 1
+        return bestTime(prices,0,1,1,mp);
+    }
+};
+
+
+
+class Solution {
+public:
+    int dp[100001][2][2];
+    int bestTime(vector<int>&prices, int currentDay, bool canBuy, int transCount){
+        if(currentDay >= prices.size() || transCount <=0){
+            return 0;
+        }
+        
+        if(dp[currentDay][canBuy][transCount]!=-1){
+            return dp[currentDay][canBuy][transCount];
+        }
+        int idle = bestTime(prices,currentDay+1,canBuy,transCount);
+        int buy=0,sell=0;
+        if(canBuy){
+             buy = -prices[currentDay] + bestTime(prices,currentDay+1, 0,transCount);
+            dp[currentDay][canBuy][transCount] =  max(buy,idle);
+            return  dp[currentDay][canBuy][transCount];
+        }
+        else{
+            sell = prices[currentDay] + bestTime(prices,currentDay+1,1,transCount-1);
+            dp[currentDay][canBuy][transCount] =  max(sell,idle);
+            return  dp[currentDay][canBuy][transCount];
+        }
+    }
+    int maxProfit(vector<int>& prices) {
+        memset(dp,-1,sizeof(dp));
+        return bestTime(prices,0,1,1);
+    }
+};
+
+
+
+
+
+
